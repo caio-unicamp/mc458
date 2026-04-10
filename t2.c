@@ -1,4 +1,5 @@
 # include <stdio.h>
+# include <stdlib.h>
 
 typedef struct node {
    int peso;
@@ -21,24 +22,25 @@ Node* criaNo(int peso) {
  * - p pertence a [-10^4, 10^4]
  * @param raiz
  */
-void le(Node *raiz){
+void le(Node **raiz){
     int peso;
     char flag;
 
-
-    scanf("%d %c", &peso, &flag);
-    raiz = criaNo(peso);
+    if (scanf("%d", &peso) != 1){
+        return;
+    }
+    *raiz = criaNo(peso);
 
     // Esquerda
-    scanf(" "); // Ignora espaço pós flag
+    scanf(" %c", &flag);
     if (flag == 'T'){
-        le(raiz->esq);   // Chama recursivamente
+        le(&((*raiz)->esq));   // Chama recursivamente
     }
 
     // Direita
-    scanf("%c ", &flag); // Ignora espaço pós Flag
+    scanf(" %c", &flag); // Ignora espaço pós Flag
     if (flag == 'T'){
-        le(raiz->dir);   // Chama recursivamente
+        le(&((*raiz)->dir));   // Chama recursivamente
     }
 }
 
@@ -54,44 +56,40 @@ void libera(Node *raiz){
     }
 }
 
-int acha_maior_peso(Node *raiz, int maior_total, int maior_lado){
-    int aux_total = maior_total;
-    int aux_lado = maior_lado;
+int acha_maior_peso(Node *raiz, int *maior_total){
+    int esq = 0, dir = 0;   // Inicializa como 0 os pesos dos filhos antes de ir até eles
     
     if (raiz->esq){ // Esquerda não nula
-        maior_lado = acha_maior_peso(raiz->esq, aux_total, aux_lado); 
-        if (maior_lado > 0){
-            maior_total += maior_lado;
-        }
+        esq = acha_maior_peso(raiz->esq, maior_total);
+        esq = (esq > 0) ? esq : 0;
     }
     
-    int aux_esq = maior_total;
+    // int aux_esq = maior_total;
     
     if (raiz->dir){ // Direita não nula
-        maior_lado = acha_maior_peso(raiz->dir, maior_total, maior_lado);
-        if (maior_lado > 0){
-            maior_total += maior_lado;
-        }
+        dir = acha_maior_peso(raiz->dir, maior_total);
+        dir = (dir > 0) ? dir : 0;  // Só acrescenta se for positivo
     }
     
-    // if (aux_esq + aux_inicio > maior_total){
-    //     maior_total = aux;
-    // }    
+    
+    int aux_total = raiz->peso + esq + dir;
+    
+    if (aux_total > *maior_total){
+        *maior_total = aux_total;
+    }    
 
-    maior_total += raiz->peso;
-    return maior_total; 
+    return raiz->peso + (esq > dir ? esq : dir);
 }
 
 int main(){ 
-    char *sequencia;
     Node *raiz = NULL;
-    int maior_peso;
+    int maior_peso = 0;
 
-    le(raiz);    
+    le(&raiz);    
 
-    maior_peso = acha_maior_peso(raiz, 0, 0);    
+    maior_peso = acha_maior_peso(raiz, &maior_peso);    
     maior_peso = (maior_peso >= 0) ? maior_peso : 0;    // Se for negativo o caminho é vazio e vai pra 0 o peso máximo
-    printf("%d", maior_peso);
+    printf("%d\n", maior_peso);
 
     libera(raiz);
 
