@@ -63,9 +63,7 @@ int acha_maior_peso(Node *raiz, int *maior_total){
         esq = acha_maior_peso(raiz->esq, maior_total);
         esq = (esq > 0) ? esq : 0;
     }
-    
-    // int aux_esq = maior_total;
-    
+        
     if (raiz->dir){ // Direita não nula
         dir = acha_maior_peso(raiz->dir, maior_total);
         dir = (dir > 0) ? dir : 0;  // Só acrescenta se for positivo
@@ -87,7 +85,7 @@ int main(){
 
     le(&raiz);    
 
-    maior_peso = acha_maior_peso(raiz, &maior_peso);    
+    acha_maior_peso(raiz, &maior_peso);    
     maior_peso = (maior_peso >= 0) ? maior_peso : 0;    // Se for negativo o caminho é vazio e vai pra 0 o peso máximo
     printf("%d\n", maior_peso);
 
