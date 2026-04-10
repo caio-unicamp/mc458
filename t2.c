@@ -7,7 +7,11 @@ typedef struct node {
    struct node *dir;
 } Node;
 
-
+/**
+ * Função para alocar dinamicamente novos nós (folha) da árvore binária
+ * @param peso peso relativo ao nó que será criado na árvore
+ * @return Nova folha inicializada com filhos nulos
+ */
 Node* criaNo(int peso) {
    Node* novo = (Node*)malloc(sizeof(Node));
    novo->peso = peso;
@@ -20,7 +24,14 @@ Node* criaNo(int peso) {
  * Lê uma sequência S = p flagE SE flagD SD em que
  * 
  * - p pertence a [-10^4, 10^4]
- * @param raiz
+ * 
+ * - flagE, flagD pertencem a {T,F}
+ * 
+ * - Se flagE = T então então SE é a sequência que descreve TE, caso contrário SE é vazia
+ * 
+ * - Se flagD = T então então SD é a sequência que descreve TD, caso contrário SD é vazia.
+ * 
+ * @param raiz 
  */
 void le(Node **raiz){
     int peso;
@@ -56,6 +67,12 @@ void libera(Node *raiz){
     }
 }
 
+/**
+ * Função recursiva para buscar na árvore por trechos (passando ou não pelo vértice pai) que maximizem o peso total do caminho
+ * @param raiz aaa
+ * @param maior_total maior peso encontrado na busca
+ * @returns Peso da árvore binária máxima
+ */
 int acha_maior_peso(Node *raiz, int *maior_total){
     int esq = 0, dir = 0;   // Inicializa como 0 os pesos dos filhos antes de ir até eles
     
@@ -68,7 +85,6 @@ int acha_maior_peso(Node *raiz, int *maior_total){
         dir = acha_maior_peso(raiz->dir, maior_total);
         dir = (dir > 0) ? dir : 0;  // Só acrescenta se for positivo
     }
-    
     
     int aux_total = raiz->peso + esq + dir;
     
